@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IISC 2026 | Social Card Generator</title>
+
+<style>
+:root {
+  --navy: #061831;
+  --navy-light: #102947;
+  --blue: #94b8e3;
+  --white: #ffffff;
+  --muted: #b9c9dc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #041225, #102844);
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+  text-align: center;
+  padding: 35px 18px 20px;
+}
+
+.eyebrow {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+header h1 {
+  font-size: clamp(25px, 4vw, 38px);
+  margin: 12px 0;
+}
+
+header p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: auto;
+  max-width: 620px;
+}
+
+main {
+  width: min(1150px, 100%);
+  margin: auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.panel {
+  padding: 24px;
+  border: 1px solid #29415e;
+  background: rgba(255,255,255,0.045);
+  border-radius: 18px;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 19px;
+}
+
+.category {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0 25px;
+}
+
+.category button {
+  min-height: 88px;
+  padding: 13px 8px;
+  color: var(--white);
+  background: #102844;
+  border: 1px solid #405875;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.category button.active {
+  border: 2px solid var(--blue);
+  background: #1b3858;
+  box-shadow: 0 0 0 2px rgba(148,184,227,.12);
+}
+
+.category button span {
+  display: block;
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+label {
+  display: block;
+  margin: 17px 0 7px;
+  color: #dce8f6;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input[type="text"],
+input[type="file"] {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 9px;
+  border: 1px solid #405875;
+  background: #071a31;
+  color: white;
+  font: inherit;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.hint {
+  color: #aebfd3;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.primary,
+.secondary {
+  width: 100%;
+  padding: 14px;
+  margin-top: 17px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.primary {
+  color: #061831;
+  background: var(--blue);
+  border: 0;
+}
+
+.secondary {
+  color: white;
+  background: transparent;
+  border: 1px solid #526b89;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+.preview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.preview-heading h2 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.preview-heading span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.preview-frame {
+  padding: 12px;
+  border: 1px solid #29415e;
+  background: #041225;
+  border-radius: 15px;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.status {
+  min-height: 18px;
+  margin-top: 12px;
+  color: var(--blue);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+footer {
+  padding: 15px;
+  text-align: center;
+  color: #91a7c1;
+  font-size: 12px;
+}
+
+@media (max-width: 800px) {
+  main {
+    grid-template-columns: 1fr;
+    max-width: 620px;
+  }
+
+  header {
+    padding-top: 25px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="eyebrow">Indian Space Association</div>
+  <h1>IISC 2026 Card Generator</h1>
+  <p>
+    Personalize your official India International Space Conclave
+    social media card and download it instantly.
+  </p>
+</header>
+
+<main>
+
+  <section class="panel">
+    <h2>01 — Choose your category</h2>
+
+    <div class="category">
+      <button id="guestButton" class="active" type="button">
+        <span>👤</span>
+        Invitee / Guest
+      </button>
+
+      <button id="speakerButton" type="button">
+        <span>🎙️</span>
+        Speaker
+      </button>
+    </div>
+
+    <h2>02 — Personalize your card</h2>
+
+    <label for="photo">Upload photograph</label>
+    <input id="photo" type="file" accept="image/*">
+
+    <p class="hint">
+      Use a clear portrait. The image is processed in your browser.
+    </p>
+
+    <label for="fullName">Full name</label>
+    <input id="fullName" type="text"
+           placeholder="Enter your full name" maxlength="55">
+
+    <label for="designation">Designation</label>
+    <input id="designation" type="text"
+           placeholder="e.g. Research Intern" maxlength="65">
+
+    <label for="organization">Organization</label>
+    <input id="organization" type="text"
+           placeholder="e.g. Indian Space Association" maxlength="75">
+
+    <button class="primary" id="downloadButton" type="button">
+      Download card as PNG
+    </button>
+
+    <button class="secondary" id="resetButton" type="button">
+      Reset details
+    </button>
+
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section>
+    <div class="preview-heading">
+      <h2>Live preview</h2>
+      <span id="categoryLabel">Invitee / Guest</span>
+    </div>
+
+    <div class="preview-frame">
+      <canvas id="poster"></canvas>
+    </div>
+
+    <p class="hint">
+      Your selected template stays unchanged except for the personalized
+      photograph and text. Download your final card when it looks right.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  India International Space Conclave 2026 · 23–24 November 2026
+</footer>
+
+<script>
+"use strict";
+
+/*
+  TEMPLATE FILES
+  Keep both images in the same folder as index.html.
+
+  Recommended:
+  invitee-template.png
+  speaker-template.png
+
+  Export templates at their original resolution.
+  Use the same 4:5 aspect ratio for both designs where possible.
+*/
+
+const TEMPLATE_PATHS = {
+  guest: "invitee-template.png",
+  speaker: "speaker-template.png"
+};
+
+/*
+  DESIGN COORDINATES
+
+  The reference design area is 1100 x 1375.
+  These coordinates match the supplied invitee poster.
+
+  If the speaker layout differs, adjust its values separately.
+*/
+
+const LAYOUTS = {
+  guest: {
+    width: 1100,
+    height: 1375,
+
+    photo: {
+      x: 69,
+      y: 503,
+      w: 424,
+      h: 423,
+      border: 10,
+      radius: 15
+    },
+
+    mask: {
+      x: 35,
+      y: 970,
+      w: 1030,
+      h: 165
+    },
+
+    name: {
+      x: 70,
+      y: 1041,
+      maxWidth: 960,
+      maxSize: 60,
+      minSize: 28
+    },
+
+    details: {
+      x: 70,
+      y: 1097,
+      maxWidth: 960,
+      maxSize: 39,
+      minSize: 20
+    }
+  },
+
+  speaker: {
+    width: 1100,
+    height: 1375,
+
+    // Adjust these coordinates if your speaker template differs.
+    photo: {
+      x: 69,
+      y: 503,
+      w: 424,
+      h: 423,
+      border: 10,
+      radius: 15
+    },
+
+    mask: {
+      x: 35,
+      y: 970,
+      w: 1030,
+      h: 165
+    },
+
+    name: {
+      x: 70,
+      y: 1041,
+      maxWidth: 960,
+      maxSize: 60,
+      minSize: 28
+    },
+
+    details: {
+      x: 70,
+      y: 1097,
+      maxWidth: 960,
+      maxSize: 39,
+      minSize: 20
+    }
+  }
+};
+
+const canvas = document.getElementById("poster");
+const ctx = canvas.getContext("2d");
+
+const statusBox = document.getElementById("status");
+
+const fields = {
+  photo: document.getElementById("photo"),
+  name: document.getElementById("fullName"),
+  designation: document.getElementById("designation"),
+  organization: document.getElementById("organization")
+};
+
+const templates = {};
+let selectedCategory = "guest";
+let portrait = null;
+let portraitUrl = null;
+let renderVersion = 0;
+
+function setStatus(message) {
+  statusBox.textContent = message;
+}
+
+function loadTemplate(category) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => {
+      templates[category] = img;
+      resolve(img);
+    };
+
+    img.onerror = () => {
+      reject(new Error(
+        "Could not load " + TEMPLATE_PATHS[category] +
+        ". Check that the file is in the same folder as index.html."
+      ));
+    };
+
+    img.src = TEMPLATE_PATHS[category];
+  });
+}
+
+function roundedRect(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+
+function drawCoverImage(image, x, y, w, h, radius) {
+  const iw = image.naturalWidth || image.width;
+  const ih = image.naturalHeight || image.height;
+
+  const scale = Math.max(w / iw, h / ih);
+  const sw = w / scale;
+  const sh = h / scale;
+
+  // Center crop; no stretching.
+  const sx = (iw - sw) / 2;
+  const sy = (ih - sh) / 2;
+
+  ctx.save();
+  roundedRect(ctx, x, y, w, h, radius);
+  ctx.clip();
+
+  ctx.drawImage(image, sx, sy, sw, sh, x, y, w, h);
+
+  ctx.restore();
+}
+
+function fitText(text, maxWidth, maxSize, minSize, weight) {
+  let size = maxSize;
+
+  while (size > minSize) {
+    ctx.font = `${weight} ${size}px Arial, Helvetica, sans-serif`;
+
+    if (ctx.measureText(text).width <= maxWidth) {
+      return size;
+    }
+
+    size--;
+  }
+
+  return minSize;
+}
+
+function drawNameAndDetails(layout) {
+  /*
+    IMPORTANT:
+    The template may already contain printed placeholder text.
+    Cover the entire old placeholder region first, then draw the
+    new text. This prevents duplicate text showing underneath.
+
+    The mask color is matched to the dark navy background of the
+    supplied invitee template. Adjust if your artwork has a
+    different background in this area.
+  */
+
+  const m = layout.mask;
+
+  const maskGradient = ctx.createLinearGradient(
+    m.x, m.y, m.x + m.w, m.y + m.h
+  );
+
+  maskGradient.addColorStop(0, "#041a35");
+  maskGradient.addColorStop(0.45, "#031831");
+  maskGradient.addColorStop(1, "#031831");
+
+  ctx.save();
+  ctx.fillStyle = maskGradient;
+  ctx.fillRect(m.x, m.y, m.w, m.h);
+  ctx.restore();
+
+  const name = fields.name.value.trim() || "[YOUR NAME]";
+
+  const designation =
+    fields.designation.value.trim() || "[DESIGNATION]";
+
+  const organization =
+    fields.organization.value.trim() || "[ORGANIZATION]";
+
+  const details = `${designation} | ${organization}`;
+
+  ctx.save();
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+
+  const nameSize = fitText(
+    name,
+    layout.name.maxWidth,
+    layout.name.maxSize,
+    layout.name.minSize,
+    700
+  );
+
+  ctx.font = `700 ${nameSize}px Arial, Helvetica, sans-serif`;
+  ctx.fillStyle = "#94b8e3";
+  ctx.fillText(name, layout.name.x, layout.name.y);
+
+  const detailsSize = fitText(
+    details,
+    layout.details.maxWidth,
+    layout.details.maxSize,
+    layout.details.minSize,
+    400
+  );
+
+  ctx.font = `400 ${detailsSize}px Arial, Helvetica, sans-serif`;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(details, layout.details.x, layout.details.y);
+
+  ctx.restore();
+}
+
+function drawPhoto(layout) {
+  const p = layout.photo;
+
+  /*
+    Draw a clean frame first, then the photo inside it.
+    This replaces the original placeholder instead of leaving
+    its white interior or printed words visible.
+  */
+
+  ctx.save();
+
+  roundedRect(ctx, p.x, p.y, p.w, p.h, p.radius + 5);
+  ctx.fillStyle = "#94b8e3";
+  ctx.fill();
+
+  const innerX = p.x + p.border;
+  const innerY = p.y + p.border;
+  const innerW = p.w - 2 * p.border;
+  const innerH = p.h - 2 * p.border;
+
+  if (portrait) {
+    drawCoverImage(
+      portrait,
+      innerX,
+      innerY,
+      innerW,
+      innerH,
+      p.radius
+    );
+  } else {
+    roundedRect(
+      ctx, innerX, innerY, innerW, innerH, p.radius
+    );
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+
+    ctx.fillStyle = "#8997a9";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "700 28px Arial, Helvetica, sans-serif";
+
+    ctx.fillText(
+      "YOUR PHOTO",
+      innerX + innerW / 2,
+      innerY + innerH / 2
+    );
+  }
+
+  ctx.restore();
+}
+
+function render() {
+  const version = ++renderVersion;
+  const template = templates[selectedCategory];
+
+  if (!template) {
+    canvas.width = 800;
+    canvas.height = 1000;
+
+    ctx.fillStyle = "#061831";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "22px Arial";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+      "Upload the template files next to index.html",
+      canvas.width / 2,
+      canvas.height / 2
+    );
+
+    return;
+  }
+
+  const layout = LAYOUTS[selectedCategory];
+
+  /*
+    Match the canvas to the template's original pixel dimensions.
+    This prevents the original image from being stretched or
+    cropped by an arbitrary canvas aspect ratio.
+  */
+
+  canvas.width = template.naturalWidth;
+  canvas.height = template.naturalHeight;
+
+  const scaleX = canvas.width / layout.width;
+  const scaleY = canvas.height / layout.height;
+
+  ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+
+  ctx.clearRect(0, 0, layout.width, layout.height);
+  ctx.drawImage(template, 0, 0, layout.width, layout.height);
+
+  drawPhoto(layout);
+  drawNameAndDetails(layout);
+
+  if (version !== renderVersion) return;
+}
+
+async function chooseCategory(category) {
+  selectedCategory = category;
+
+  document.getElementById("guestButton")
+    .classList.toggle("active", category === "guest");
+
+  document.getElementById("speakerButton")
+    .classList.toggle("active", category === "speaker");
+
+  document.getElementById("categoryLabel").textContent =
+    category === "guest" ? "Invitee / Guest" : "Speaker";
+
+  setStatus("Loading template...");
+
+  try {
+    if (!templates[category]) {
+      await loadTemplate(category);
+    }
+
+    render();
+    setStatus("Template ready. Personalize your card.");
+  } catch (error) {
+    render();
+    setStatus(error.message);
+  }
+}
+
+document.getElementById("guestButton").addEventListener(
+  "click", () => chooseCategory("guest")
+);
+
+document.getElementById("speakerButton").addEventListener(
+  "click", () => chooseCategory("speaker")
+);
+
+fields.photo.addEventListener("change", event => {
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    setStatus("Please select a valid image.");
+    return;
+  }
+
+  if (portraitUrl) URL.revokeObjectURL(portraitUrl);
+
+  portraitUrl = URL.createObjectURL(file);
+  const image = new Image();
+
+  image.onload = () => {
+    portrait = image;
+    render();
+    setStatus("Photograph added successfully.");
+  };
+
+  image.onerror = () => {
+    setStatus("Unable to read this photograph. Try another image.");
+  };
+
+  image.src = portraitUrl;
+});
+
+[
+  fields.name,
+  fields.designation,
+  fields.organization
+].forEach(input => {
+  input.addEventListener("input", render);
+});
+
+document.getElementById("downloadButton").addEventListener(
+  "click", () => {
+    const template = templates[selectedCategory];
+
+    if (!template) {
+      setStatus("Please ensure the selected template is available.");
+      return;
+    }
+
+    render();
+
+    canvas.toBlob(blob => {
+      if (!blob) {
+        setStatus("Could not export the card. Please try again.");
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      const safeName = (
+        fields.name.value.trim() || "IISC2026-card"
+      )
+        .replace(/[^a-z0-9_-]/gi, "-")
+        .replace(/^-+|-+$/g, "");
+
+      link.href = url;
+      link.download = `${safeName}-${selectedCategory}-IISC2026.png`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setStatus("Your personalized PNG is ready.");
+    }, "image/png");
+  }
+);
+
+document.getElementById("resetButton").addEventListener(
+  "click", () => {
+    fields.name.value = "";
+    fields.designation.value = "";
+    fields.organization.value = "";
+    fields.photo.value = "";
+
+    portrait = null;
+
+    if (portraitUrl) {
+      URL.revokeObjectURL(portraitUrl);
+      portraitUrl = null;
+    }
+
+    render();
+    setStatus("Your details have been reset.");
+  }
+);
+
+// Load the invitee template on startup.
+chooseCategory("guest");
+</script>
+
+</body>
+</html>
